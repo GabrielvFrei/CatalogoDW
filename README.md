@@ -1,6 +1,6 @@
-# 📚 Sistema Biblioteca Digital
+# 📚 Catalogo 
 
-Sistema completo de gerenciamento de biblioteca com frontend e backend.
+Sistema completo de gerenciamento de biblioteca com frontend e backend integrados.
 
 ## 🚀 Funcionalidades
 
@@ -26,27 +26,31 @@ Sistema completo de gerenciamento de biblioteca com frontend e backend.
 ### Backend
 - Node.js + Express.js
 - MongoDB + Mongoose
-- JWT para autenticação (versão simplificada no template)
+- JWT para autenticação
 - bcryptjs para hash de senhas
 
-## 📦 Deploy no Vercel
+## 🚀 Deploy no Render.com
 
-### Backend
-1. Crie um projeto no Vercel para a pasta `backend`
-2. Configure as variáveis de ambiente:
-   ```
-   MONGODB_URI = mongodb+srv://usuario:senha@cluster.mongodb.net/biblioteca
-   JWT_SECRET = seu-jwt-secret
-   NODE_ENV = production
-   ```
+### Configuração Única (Full Stack)
+O projeto está configurado como **aplicação full-stack** onde frontend e backend rodam juntos:
 
-### Frontend
-1. Crie um projeto no Vercel para a pasta `frontend`
-2. Framework Preset: **Static**
+1. **Web Service** no Render.com
+2. **Root Directory**: `backend` (contém o server.js que serve frontend + API)
+3. **Build Command**: `npm install`
+4. **Start Command**: `npm start`
+
+### Variáveis de Ambiente
+```
+MONGODB_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/biblioteca
+JWT_SECRET=seu-jwt-secret-super-seguro-aqui-2024
+NODE_ENV=production
+PORT=5000
+
+```
 
 ## 👤 Usuário Demo
 
-**Email**: admin@biblioteca.com
+**Email**: admin@biblioteca.com  
 **Senha**: 123456
 
 ## 🎯 Como Usar
@@ -57,11 +61,42 @@ Sistema completo de gerenciamento de biblioteca com frontend e backend.
    - Gerencie o acervo na área administrativa
    - Adicione, edite ou exclua itens
 
-## 🔗 URLs de Produção (exemplos)
+## 🌐 URL de Produção
 
-- **Frontend**: `https://biblioteca-frontend.vercel.app`
-- **Backend**: `https://biblioteca-backend.vercel.app`
-- **API**: `https://biblioteca-backend.vercel.app/api`
+**Aplicação Completa**: https://catalogodw.onrender.com
+
+### URLs específicas:
+- **Página Principal**: https://catalogodw.onrender.com/
+- **Área Admin**: https://catalogodw.onrender.com/admin.html
+- **Login**: https://catalogodw.onrender.com/login.html
+- **API Health**: https://catalogodw.onrender.com/api/health
+
+## 📁 Estrutura do Projeto
+
+```
+CatalogoDW/
+├── backend/           # Servidor Node.js + Express
+│   ├── src/          # Código fonte do backend
+│   ├── server.js     # Servidor principal (frontend + backend)
+│   └── package.json
+├── frontend/         # Interface do usuário
+│   ├── index.html    # Página pública
+│   ├── admin.html    # Painel administrativo
+│   ├── login.html    # Tela de login
+│   ├── css/          # Estilos
+│   └── js/           # JavaScript do frontend
+└── README.md
+```
+
+## 🔧 Desenvolvimento Local
+
+```bash
+# Backend + Frontend
+cd backend
+npm start
+
+# Acesse: http://localhost:5000
+```
 
 ## 📄 Licença
 
