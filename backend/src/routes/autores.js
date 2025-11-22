@@ -1,15 +1,16 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
+import isAdmin from '../middleware/isAdmin.js';
 import { listAutores, createAutor, updateAutor, deleteAutor } from '../controllers/autoresController.js';
 
 const router = express.Router();
 
-// Public
+// Público: rotas que qualquer visitante pode acessar
 router.get('/', listAutores);
 
-// Protected
-router.post('/', auth, createAutor);
-router.put('/:id', auth, updateAutor);
-router.delete('/:id', auth, deleteAutor);
+// Protegido: requer autenticação (e permissão de admin para mutações)
+router.post('/', auth, isAdmin, createAutor);
+router.put('/:id', auth, isAdmin, updateAutor);
+router.delete('/:id', auth, isAdmin, deleteAutor);
 
 export default router;

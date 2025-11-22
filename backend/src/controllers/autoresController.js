@@ -1,4 +1,7 @@
 import Autor from '../models/Autor.js';
+import Livro from '../models/Livro.js';
+import DVD from '../models/DVD.js';
+import CD from '../models/CD.js';
 
 export const listAutores = async (req, res) => {
   try {
@@ -30,9 +33,12 @@ export const updateAutor = async (req, res) => {
 
 export const deleteAutor = async (req, res) => {
   try {
-    const autor = await Autor.findByIdAndDelete(req.params.id);
+  // Executa a remoção do autor. Os hooks definidos no modelo `Autor`
+  // tratam da exclusão em cascata das obras relacionadas (livros, dvds, cds).
+  const autor = await Autor.findByIdAndDelete(req.params.id);
     if (!autor) return res.status(404).json({ success: false, message: 'Autor não encontrado' });
-    res.json({ success: true, message: 'Autor deletado com sucesso' });
+  // Se conseguiu remover, retornamos confirmação ao cliente.
+  res.json({ success: true, message: 'Autor e obras relacionadas deletados com sucesso' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

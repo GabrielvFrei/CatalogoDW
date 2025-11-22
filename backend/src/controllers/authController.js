@@ -16,7 +16,8 @@ export const register = async (req, res) => {
     if (exists) return res.status(400).json({ success: false, message: 'Usuário já existe' });
 
   const hashed = await bcrypt.hash(password, 12);
-  // Force role to 'user' for newly registered accounts to avoid privilege escalation
+  // Garantir que novos usuários recebam o papel 'user' — evita que clientes
+  // maliciosos consigam se registrar como administradores.
   const usuario = await Usuario.create({ nome, email, password: hashed, role: 'user' });
 
     const token = jwt.sign({ id: usuario._id }, JWT_SECRET, { expiresIn: '7d' });

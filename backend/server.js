@@ -21,18 +21,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend static files
+// Servir os arquivos estáticos do frontend a partir deste servidor (API + frontend juntos)
 const frontendDir = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendDir));
 
-// Conecta ao MongoDB
+// Conectar ao MongoDB e inicializar dados quando necessário
 connectDB().then(() => {
-  console.log('✅ MongoDB inicializado');
+  
 }).catch(err => {
   console.error('❌ MongoDB não conectado:', err.message);
 });
 
-// Middleware para verificar conexão com DB
+// Middleware que verifica se a conexão com o banco está pronta antes de processar a rota
 const checkDB = (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({
@@ -44,14 +44,14 @@ const checkDB = (req, res, next) => {
   next();
 };
 
-// Rotas
+// Registro das rotas da API (mapeamento para os módulos em src/routes)
 app.use('/api/auth', checkDB, authRoutes);
 app.use('/api/autores', checkDB, autoresRoutes);
 app.use('/api/livros', checkDB, livrosRoutes);
 app.use('/api/dvds', checkDB, dvdsRoutes);
 app.use('/api/cds', checkDB, cdsRoutes);
 
-// Serve frontend pages
+// Entregar páginas estáticas do frontend (rotas principais)
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendDir, 'index.html'));
 });
@@ -64,7 +64,7 @@ app.get('/admin.html', (req, res) => {
   res.sendFile(path.join(frontendDir, 'admin.html'));
 });
 
-// Health check
+// Rota de verificação rápida (health check) — informa estado do servidor e do banco
 app.get('/api/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'Conectado' : 'Desconectado';
   
@@ -77,21 +77,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 🔥🔥🔥 CORREÇÃO CRÍTICA PARA RENDER 🔥🔥🔥
 const PORT = process.env.PORT || 10000;
 
-// 🔥 ESCUTAR EM 0.0.0.0 (IMPORTANTE PARA RENDER)
+// ESCUTAR EM 0.0.0.0 (IMPORTANTE PARA RENDER)
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🎯 Servidor rodando na porta ${PORT}`);
-  console.log(`🌐 Ambiente: ${process.env.NODE_ENV || 'production'}`);
-  console.log(`🔗 MongoDB: ${mongoose.connection.readyState === 1 ? 'Conectado' : 'Conectando...'}`);
-  console.log(`🚀 Render URL: https://catalogodw.onrender.com`);
-  console.log(`✅ Porta ${PORT} aberta e escutando!`);
+  
 });
 
-// 🔥 CONFIRMAÇÃO DE QUE A PORTA ESTÁ ABERTA
+// CONFIRMAÇÃO DE QUE A PORTA ESTÁ ABERTA
 server.on('listening', () => {
-  console.log(`✅ Servidor escutando na porta ${PORT}`);
+  
 });
 
 export default app;

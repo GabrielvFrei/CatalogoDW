@@ -4,6 +4,19 @@ document.addEventListener('DOMContentLoaded', function() {
     setupModal();
 });
 
+// Recebe notificações de outras abas (admin) para atualizar os dados exibidos
+const bcPublic = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('catalogoDW') : null;
+if (bcPublic) {
+    bcPublic.onmessage = (ev) => {
+        if (ev?.data?.action === 'refresh') loadAllData();
+    };
+} else {
+    // Fallback usando evento storage (disparado por outras abas)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'catalogoDW_refresh') loadAllData();
+    });
+}
+
 async function loadAllData() {
     try {
         await Promise.all([

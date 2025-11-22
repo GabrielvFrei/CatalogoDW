@@ -11,7 +11,7 @@ export default async function connectDB() {
     const uri = process.env.MONGODB_URI;
     if (!uri) throw new Error('MONGODB_URI não configurado');
 
-    // 🔥 ADICIONE ESTAS OPÇÕES DE TIMEOUT
+  // ADICIONE ESTAS OPÇÕES DE TIMEOUT
     const options = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -23,8 +23,7 @@ export default async function connectDB() {
       w: 'majority'
     };
 
-    await mongoose.connect(uri, options);
-    console.log('✅ MongoDB conectado com sucesso');
+  await mongoose.connect(uri, options);
 
     // Criar usuário admin padrão se não existir
     const adminExists = await Usuario.findOne({ email: 'admin@biblioteca.com' });
@@ -36,7 +35,7 @@ export default async function connectDB() {
         password: hashedPassword, 
         role: 'admin' 
       });
-      console.log('👤 Usuário admin criado: admin@biblioteca.com / 123456');
+      
     }
 
     // Seed de autores e itens de exemplo (se vazio)
@@ -86,11 +85,11 @@ export default async function connectDB() {
         autor: autor2._id 
       });
 
-      console.log('📚 Dados de exemplo criados com sucesso!');
+      
     }
   } catch (error) {
     console.error('❌ Erro ao conectar com MongoDB:', error.message);
     // Não throw error aqui - deixa o servidor rodar mesmo sem DB
-    console.log('⚠️ Servidor continuando sem conexão com MongoDB');
+    
   }
 }

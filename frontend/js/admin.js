@@ -14,6 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
     setupLogout();
 });
 
+// Canal para notificar outras abas/páginas sobre mudanças (criar/editar/excluir)
+const bc = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('catalogoDW') : null;
+
+function notifyRefresh() {
+    // Prefer BroadcastChannel quando disponível
+    if (bc) {
+        try { bc.postMessage({ action: 'refresh' }); } catch (e) { /* ignore */ }
+        return;
+    }
+    // Fallback: use localStorage event to notify outras abas
+    try {
+        localStorage.setItem('catalogoDW_refresh', Date.now().toString());
+    } catch (e) { /* ignore */ }
+}
+
 function setupNavigation() {
     const navButtons = document.querySelectorAll('.nav-btn');
     
@@ -367,6 +382,7 @@ async function handleAutorSubmit(e) {
         
         closeFormModal();
         loadAdminAutores();
+        notifyRefresh();
     } catch (error) {
         alert('❌ Erro ao salvar autor: ' + error.message);
     }
@@ -392,6 +408,7 @@ async function handleLivroSubmit(e) {
         
         closeFormModal();
         loadAdminLivros();
+        notifyRefresh();
     } catch (error) {
         alert('❌ Erro ao salvar livro: ' + error.message);
     }
@@ -417,6 +434,7 @@ async function handleDVDSubmit(e) {
         
         closeFormModal();
         loadAdminDVDs();
+        notifyRefresh();
     } catch (error) {
         alert('❌ Erro ao salvar DVD: ' + error.message);
     }
@@ -442,6 +460,7 @@ async function handleCDSubmit(e) {
         
         closeFormModal();
         loadAdminCDs();
+        notifyRefresh();
     } catch (error) {
         alert('❌ Erro ao salvar CD: ' + error.message);
     }
@@ -541,6 +560,8 @@ async function deleteItem(type, id) {
         }
         
         document.getElementById('confirm-modal').style.display = 'none';
+        // notificar outras abas/páginas para atualizarem o conteúdo público
+        notifyRefresh();
     } catch (error) {
         alert('❌ Erro ao excluir: ' + error.message);
     }

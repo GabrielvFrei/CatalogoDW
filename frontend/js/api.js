@@ -1,11 +1,11 @@
 // Configuração automática da URL da API
 const getApiBase = () => {
-	// ⚠️ CORREÇÃO: URL relativa - funciona em qualquer ambiente
+	// CORREÇÃO: URL relativa - funciona em qualquer ambiente
 	return '/api';
 };
 
 const API_BASE = getApiBase();
-console.log('🔗 Conectando à API:', API_BASE);
+// console.log('Conectando à API:', API_BASE);
 
 class API {
 	constructor() {
@@ -15,7 +15,7 @@ class API {
 
 	async request(endpoint, options = {}) {
 		const url = `${this.baseURL}${endpoint}`;
-		console.log('🌐 Fazendo request para:', url); // Debug
+	// console.log('Fazendo request para:', url); // Depuração (remova em produção)
 		
 		const config = {
 			headers: {

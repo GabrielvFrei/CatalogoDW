@@ -1,15 +1,16 @@
 import express from 'express';
 import auth from '../middleware/auth.js';
+import isAdmin from '../middleware/isAdmin.js';
 import { listCDs, createCD, updateCD, deleteCD } from '../controllers/cdsController.js';
 
 const router = express.Router();
 
-// Public
+// Público: rotas que qualquer visitante pode acessar
 router.get('/', listCDs);
 
-// Protected
-router.post('/', auth, createCD);
-router.put('/:id', auth, updateCD);
-router.delete('/:id', auth, deleteCD);
+// Protegido: requer autenticação (e permissão de admin para mutações)
+router.post('/', auth, isAdmin, createCD);
+router.put('/:id', auth, isAdmin, updateCD);
+router.delete('/:id', auth, isAdmin, deleteCD);
 
 export default router;
