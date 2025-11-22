@@ -2,7 +2,7 @@
 const getApiBase = () => {
 	// Se estiver no Vercel (produção)
 	if (window.location.hostname.includes('vercel.app')) {
-		return 'https://biblioteca-backend.vercel.app/api';
+		return '/api';
 	}
 	// Desenvolvimento local
 	return 'http://localhost:5000/api';
