@@ -1,15 +1,10 @@
 // Configuração automática da URL da API
 const getApiBase = () => {
-	// Se estiver no railwayaaaaaaaaaa (produção)
-	if (window.location.hostname.includes('railway.app')) {
-		return 'https://catalogodw-production.up.railway.app/api';
-	}
-	// Desenvolvimento local
-	return 'http://localhost:5000/api';
+	// ⚠️ CORREÇÃO: URL relativa - funciona em qualquer ambiente
+	return '/api';
 };
 
 const API_BASE = getApiBase();
-
 console.log('🔗 Conectando à API:', API_BASE);
 
 class API {
@@ -20,6 +15,8 @@ class API {
 
 	async request(endpoint, options = {}) {
 		const url = `${this.baseURL}${endpoint}`;
+		console.log('🌐 Fazendo request para:', url); // Debug
+		
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
@@ -176,4 +173,3 @@ class API {
 }
 
 const api = new API();
-
