@@ -29,45 +29,37 @@ app.use(express.json());
 const frontendDir = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendDir));
 
-// 🔥 CONEXÃO MONGODB MELHORADA PARA RENDER
+// Conecta ao MongoDB
 connectDB().then(() => {
-  console.log('✅ MongoDB inicializado no Render');
+  console.log('✅ MongoDB inicializado');
 }).catch(err => {
   console.error('❌ MongoDB não conectado:', err.message);
 });
 
-// 🔥 MIDDLEWARE INTELIGENTE - Só verifica DB para rotas que precisam
+// Middleware para verificar conexão com DB
 const checkDB = (req, res, next) => {
-  // Rotas que NÃO precisam de DB
-  const publicRoutes = ['/api/health', '/api/test-db'];
-  if (publicRoutes.includes(req.path)) {
-    return next();
-  }
-  
-  // Rotas que precisam de DB
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({
       success: false,
-      message: 'Database conectando... tente novamente em alguns segundos',
+      message: 'Database não conectado. Aguarde alguns segundos.',
       readyState: mongoose.connection.readyState
     });
   }
   next();
 };
 
-// Aplicar middleware apenas nas rotas que precisam de DB
+// Rotas (modulares) - todas exigem DB conectado
 app.use('/api/auth', checkDB, authRoutes);
 app.use('/api/autores', checkDB, autoresRoutes);
 app.use('/api/livros', checkDB, livrosRoutes);
 app.use('/api/dvds', checkDB, dvdsRoutes);
 app.use('/api/cds', checkDB, cdsRoutes);
 
-// Serve frontend index at root
+// Serve frontend pages
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendDir, 'index.html'));
 });
 
-// Serve outras páginas do frontend
 app.get('/login.html', (req, res) => {
   res.sendFile(path.join(frontendDir, 'login.html'));
 });
@@ -76,53 +68,31 @@ app.get('/admin.html', (req, res) => {
   res.sendFile(path.join(frontendDir, 'admin.html'));
 });
 
-// 🔥 HEALTH CHECK MELHORADO - SEMPRE FUNCIONA
+// Health check
 app.get('/api/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'Conectado' : 'Desconectado';
   
   res.json({
-    success: true, // ⬅️ SEMPRE true, pois a API está online
+    success: dbStatus === 'Conectado',
     message: dbStatus === 'Conectado' ? 'API está funcionando perfeitamente!' : 'API online - Database conectando...',
     database: dbStatus,
-    readyState: mongoose.connection.readyState,
-    environment: process.env.NODE_ENV || 'production',
+    environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString()
   });
 });
 
-// 🔥 ROTA DE TESTE DE DB - Só funciona se DB estiver conectado
-app.get('/api/test-db', async (req, res) => {
-  try {
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(503).json({
-        success: false,
-        message: 'Database ainda não conectado'
-      });
-    }
-    
-    const autoresCount = await mongoose.connection.db.collection('autores').countDocuments();
-    res.json({
-      success: true,
-      message: 'Database funcionando!',
-      autoresCount: autoresCount,
-      collections: await mongoose.connection.db.listCollections().toArray()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Database error: ' + error.message
-    });
-  }
-});
+// Porta universal (Local + Render)
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
-// 🔥 PORTA PARA RENDER
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-  console.log(`🎯 Servidor rodando na porta ${PORT}`);
-  console.log(`🌐 Ambiente: ${process.env.NODE_ENV || 'production'}`);
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Servidor rodando: http://${HOST}:${PORT}`);
+  console.log(`🌐 Ambiente: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 MongoDB: ${mongoose.connection.readyState === 1 ? 'Conectado' : 'Conectando...'}`);
-  console.log(`🚀 Render URL: https://catalogodw.onrender.com`);
+  
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`✅ Deploy: https://catalogodw.onrender.com`);
+  }
 });
 
 export default app;
