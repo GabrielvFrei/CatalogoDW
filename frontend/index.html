@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sistema Biblioteca - Página Pública</title>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+	<header>
+		<div class="header-content">
+			<h1>📚 Biblioteca Digital</h1>
+			<nav>
+				<a href="#autores">Autores</a>
+				<a href="#livros">Livros</a>
+				<a href="#dvds">DVDs</a>
+				<a href="#cds">CDs</a>
+				<a href="login.html" class="admin-btn">Área do Administrador</a>
+			</nav>
+		</div>
+	</header>
+
+	<main>
+		<section class="hero">
+			<div class="hero-content">
+				<h2>Bem-vindo à Biblioteca Digital</h2>
+				<p>Explore nosso acervo completo de livros, DVDs e CDs</p>
+			</div>
+		</section>
+
+		<section id="autores" class="section">
+			<div class="container">
+				<h2>📖 Autores</h2>
+				<div class="search-bar">
+					<input type="text" id="search-autores" placeholder="Buscar autores...">
+				</div>
+				<div id="autores-list" class="grid-container"></div>
+				<div id="autores-loading" class="loading">Carregando autores...</div>
+			</div>
+		</section>
+
+		<section id="livros" class="section">
+			<div class="container">
+				<h2>📚 Livros</h2>
+				<div class="search-bar">
+					<input type="text" id="search-livros" placeholder="Buscar livros...">
+				</div>
+				<div id="livros-list" class="grid-container"></div>
+				<div id="livros-loading" class="loading">Carregando livros...</div>
+			</div>
+		</section>
+
+		<section id="dvds" class="section">
+			<div class="container">
+				<h2>🎬 DVDs</h2>
+				<div class="search-bar">
+					<input type="text" id="search-dvds" placeholder="Buscar DVDs...">
+				</div>
+				<div id="dvds-list" class="grid-container"></div>
+				<div id="dvds-loading" class="loading">Carregando DVDs...</div>
+			</div>
+		</section>
+
+		<section id="cds" class="section">
+			<div class="container">
+				<h2>🎵 CDs</h2>
+				<div class="search-bar">
+					<input type="text" id="search-cds" placeholder="Buscar CDs...">
+				</div>
+				<div id="cds-list" class="grid-container"></div>
+				<div id="cds-loading" class="loading">Carregando CDs...</div>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+		<div class="container">
+			<p>&copy; 2024 Biblioteca Digital. Todos os direitos reservados.</p>
+		</div>
+	</footer>
+
+	<div id="details-modal" class="modal">
+		<div class="modal-content">
+			<span class="close-modal">&times;</span>
+			<div id="modal-body"></div>
+		</div>
+	</div>
+
+	<script src="js/api.js"></script>
+	<script src="js/public.js"></script>
+</body>
+</html>
