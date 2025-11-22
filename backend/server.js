@@ -11,6 +11,13 @@ import livrosRoutes from './src/routes/livros.js';
 import dvdsRoutes from './src/routes/dvds.js';
 import cdsRoutes from './src/routes/cds.js';
 
+// Determine __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables. Prefer a .env in project root (parent dir) if present,
+// otherwise fallback to default behavior (process.env / backend/.env).
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 dotenv.config();
 
 const app = express();
@@ -19,8 +26,6 @@ app.use(cors());
 app.use(express.json());
 
 // Serve frontend static files (single server for API + frontend)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const frontendDir = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendDir));
 
