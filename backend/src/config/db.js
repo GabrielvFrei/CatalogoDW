@@ -18,8 +18,9 @@ export default async function connectDB() {
     const adminExists = await Usuario.findOne({ email: 'admin@biblioteca.com' });
     if (!adminExists) {
       const hashedPassword = await bcrypt.hash('123456', 12);
-      await Usuario.create({ nome: 'Administrador', email: 'admin@biblioteca.com', password: hashedPassword });
-      console.log('👤 Usuário admin criado: admin@biblioteca.com / 123456');
+      // explicitly set role to 'admin' for the seeded administrator
+      await Usuario.create({ nome: 'Administrador', email: 'admin@biblioteca.com', password: hashedPassword, role: 'admin' });
+      console.log('👤 Usuário admin criado: admin@biblioteca.com / 123456 (role=admin)');
     }
 
     // Seed de autores e itens de exemplo (se vazio)

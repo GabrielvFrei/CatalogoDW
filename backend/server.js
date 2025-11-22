@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import connectDB from './src/config/db.js';
 import authRoutes from './src/routes/auth.js';
@@ -16,6 +18,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve frontend static files (single server for API + frontend)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDir = path.join(__dirname, '..', 'frontend');
+app.use(express.static(frontendDir));
+
 // Conecta ao MongoDB e cria seed quando necessário
 connectDB().catch(err => console.error(err));
 
@@ -26,8 +34,9 @@ app.use('/api/livros', livrosRoutes);
 app.use('/api/dvds', dvdsRoutes);
 app.use('/api/cds', cdsRoutes);
 
+// Serve frontend index at root
 app.get('/', (req, res) => {
-  res.json({ message: '🚀 API da Biblioteca Digital', version: '1.0.0' });
+  res.sendFile(path.join(frontendDir, 'index.html'));
 });
 
 app.get('/api/health', (req, res) => {

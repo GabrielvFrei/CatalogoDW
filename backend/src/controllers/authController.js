@@ -15,12 +15,13 @@ export const register = async (req, res) => {
     const exists = await Usuario.findOne({ email });
     if (exists) return res.status(400).json({ success: false, message: 'Usuário já existe' });
 
-    const hashed = await bcrypt.hash(password, 12);
-    const usuario = await Usuario.create({ nome, email, password: hashed });
+  const hashed = await bcrypt.hash(password, 12);
+  // Force role to 'user' for newly registered accounts to avoid privilege escalation
+  const usuario = await Usuario.create({ nome, email, password: hashed, role: 'user' });
 
     const token = jwt.sign({ id: usuario._id }, JWT_SECRET, { expiresIn: '7d' });
 
-    res.status(201).json({ success: true, token, user: { id: usuario._id, nome: usuario.nome, email: usuario.email } });
+  res.status(201).json({ success: true, token, user: { id: usuario._id, nome: usuario.nome, email: usuario.email, role: usuario.role } });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -39,7 +40,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ id: usuario._id }, JWT_SECRET, { expiresIn: '7d' });
 
-    res.json({ success: true, token, user: { id: usuario._id, nome: usuario.nome, email: usuario.email } });
+  res.json({ success: true, token, user: { id: usuario._id, nome: usuario.nome, email: usuario.email, role: usuario.role } });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
