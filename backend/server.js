@@ -12,20 +12,16 @@ import livrosRoutes from './src/routes/livros.js';
 import dvdsRoutes from './src/routes/dvds.js';
 import cdsRoutes from './src/routes/cds.js';
 
-// Determine __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
 dotenv.config();
-
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend static files (single server for API + frontend)
+// Serve frontend static files
 const frontendDir = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendDir));
 
@@ -48,7 +44,7 @@ const checkDB = (req, res, next) => {
   next();
 };
 
-// Rotas (modulares) - todas exigem DB conectado
+// Rotas
 app.use('/api/auth', checkDB, authRoutes);
 app.use('/api/autores', checkDB, autoresRoutes);
 app.use('/api/livros', checkDB, livrosRoutes);
@@ -81,18 +77,21 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Porta universal (Local + Render)
-const PORT = process.env.PORT || 5000;
-const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+// 🔥🔥🔥 CORREÇÃO CRÍTICA PARA RENDER 🔥🔥🔥
+const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, HOST, () => {
-  console.log(`🚀 Servidor rodando: http://${HOST}:${PORT}`);
-  console.log(`🌐 Ambiente: ${process.env.NODE_ENV || 'development'}`);
+// 🔥 ESCUTAR EM 0.0.0.0 (IMPORTANTE PARA RENDER)
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🎯 Servidor rodando na porta ${PORT}`);
+  console.log(`🌐 Ambiente: ${process.env.NODE_ENV || 'production'}`);
   console.log(`🔗 MongoDB: ${mongoose.connection.readyState === 1 ? 'Conectado' : 'Conectando...'}`);
-  
-  if (process.env.NODE_ENV === 'production') {
-    console.log(`✅ Deploy: https://catalogodw.onrender.com`);
-  }
+  console.log(`🚀 Render URL: https://catalogodw.onrender.com`);
+  console.log(`✅ Porta ${PORT} aberta e escutando!`);
+});
+
+// 🔥 CONFIRMAÇÃO DE QUE A PORTA ESTÁ ABERTA
+server.on('listening', () => {
+  console.log(`✅ Servidor escutando na porta ${PORT}`);
 });
 
 export default app;
