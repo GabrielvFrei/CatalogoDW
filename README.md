@@ -1,4 +1,4 @@
-# 📚 Sistema Biblioteca Digital
+# 📚 Catalogo 
 
 Sistema completo de gerenciamento de biblioteca com frontend e backend integrados.
 
