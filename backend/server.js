@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose'; // ⬅️ IMPORTANTE: importar mongoose
 
 import connectDB from './src/config/db.js';
 import authRoutes from './src/routes/auth.js';
@@ -15,8 +16,7 @@ import cdsRoutes from './src/routes/cds.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables. Prefer a .env in project root (parent dir) if present,
-// otherwise fallback to default behavior (process.env / backend/.env).
+// Load environment variables
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 dotenv.config();
 
@@ -29,8 +29,23 @@ app.use(express.json());
 const frontendDir = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendDir));
 
-// Conecta ao MongoDB e cria seed quando necessário
-connectDB().catch(err => console.error(err));
+// 🔥 CONEXÃO MONGODB MELHORADA
+connectDB().then(() => {
+  console.log('✅ MongoDB inicializado');
+}).catch(err => {
+  console.error('❌ MongoDB não conectado, mas servidor continua:', err.message);
+});
+
+// 🔥 MIDDLEWARE PARA VERIFICAR CONEXÃO COM DB
+app.use('/api/*', (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database temporariamente indisponível. Tente novamente em alguns segundos.'
+    });
+  }
+  next();
+});
 
 // Rotas (modulares)
 app.use('/api/auth', authRoutes);
@@ -44,8 +59,34 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(frontendDir, 'index.html'));
 });
 
+// 🔥 HEALTH CHECK MELHORADO
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'API está funcionando!' });
+  const dbStatus = mongoose.connection.readyState === 1 ? 'Conectado' : 'Desconectado';
+  
+  res.json({
+    success: dbStatus === 'Conectado',
+    message: dbStatus === 'Conectado' ? 'API está funcionando perfeitamente!' : 'API online mas sem database',
+    database: dbStatus,
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 🔥 ROTA DE FALLBACK PARA DB OFFLINE
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const autoresCount = await mongoose.connection.db.collection('autores').countDocuments();
+    res.json({
+      success: true,
+      message: 'Database funcionando!',
+      autoresCount: autoresCount
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Database error: ' + error.message
+    });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
@@ -53,6 +94,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🎯 Servidor rodando na porta ${PORT}`);
   console.log(`🌐 Ambiente: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔗 MongoDB: ${mongoose.connection.readyState === 1 ? 'Conectado' : 'Desconectado'}`);
 });
 
 export default app;
