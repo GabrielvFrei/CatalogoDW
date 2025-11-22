@@ -1,8 +1,8 @@
 // Configuração automática da URL da API
 const getApiBase = () => {
-	// Se estiver no Vercel (produção)
-	if (window.location.hostname.includes('vercel.app')) {
-		return '/api';
+	// Se estiver no railwayaaaaaaaaaa (produção)
+	if (window.location.hostname.includes('railway.app')) {
+		return 'https://catalogodw-production.up.railway.app/api';
 	}
 	// Desenvolvimento local
 	return 'http://localhost:5000/api';
